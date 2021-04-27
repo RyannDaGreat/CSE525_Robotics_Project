@@ -32,11 +32,13 @@ def test_unwarper():
         except Exception:
             pass
         display_image(image)
+        
+camera_index=4 if get_computer_name()=='mohiiiiiib-OP-LP3' else 2 #On Ryan's MacBook, the camera index is 2. On Mohib's laptop, the camera index is 4.
 def load_image_from_arena():
     for _ in range(3):
-        load_image_from_webcam(1)
+        load_image_from_webcam(4)
     sleep(.1)#Get rid of annoying camera lag
-    return load_image_from_webcam(1) #Configure this to the appropriate webcam
+    return load_image_from_webcam(4) #Configure this to the appropriate webcam
 def do_action(action):
     shell_command('sshpass -p a ssh -t eve@walle-desktop.local \'echo "%s()" > /home/eve/CleanCode/Robot/commands/command.py\''%action)
 class ArenaState:
@@ -75,13 +77,14 @@ while True:
         a=ArenaState()
         a.display()
         
-        if abs(a.robot_to_block_angle)>30:
+        if abs(a.robot_to_block_angle)>50:
             if a.robot_to_block_angle>0:
                 do_action('left')
             elif a.robot_to_block_angle<0:
                 do_action('right')
-        elif a.distance_to_cyan_block_in_cm>10:
+        elif a.distance_to_cyan_block_in_cm>20:
             do_action('forward')
 
     except Exception as e:
+        display_image(load_image_from_arena())
         fansi_print("ERROR: "+str(e),'red','bold')
