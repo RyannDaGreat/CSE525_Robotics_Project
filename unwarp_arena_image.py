@@ -33,11 +33,12 @@ def test_unwarper():
             pass
         display_image(image)
         
-camera_index=1 if get_computer_name()=='mohiiiiiib-OP-LP3' else 1 #On Ryan's MacBook, the camera index is 1. On Mohib's laptop, the camera index is 4.
+camera_index=4 if get_computer_name()=='mohiiiiiib-OP-LP3' else 1 #On Ryan's MacBook, the camera index is 1. On Mohib's laptop, the camera index is 4.
 def load_image_from_arena():
-    for _ in range(3):
+    tic()
+    #for _ in range(3):
+    while toc()<.5:
         load_image_from_webcam(camera_index)
-    sleep(.1)#Get rid of annoying camera lag
     return load_image_from_webcam(camera_index) #Configure this to the appropriate webcam
 def do_action(action):
     shell_command('sshpass -p a ssh -t eve@walle-desktop.local \'echo "%s()" > /home/eve/CleanCode/Robot/commands/command.py\''%action)
@@ -72,12 +73,18 @@ class ArenaState:
         image=cv_draw_circle(image,*self.cyan_block_center.astype(int),radius=6,color=(0,0,0))
         image=cv_draw_circle(image,*self.cyan_block_center.astype(int),color=(0,255,255))
         display_image(image)
+
+def do_random_robot_action():
+    do_action(random_element('forward backward'.split()))
+
 while True:
+    if random_chance(.1):
+        do_random_robot_action()
     try:
         a=ArenaState()
         a.display()
         
-        if abs(a.robot_to_block_angle)>50:
+        if abs(a.robot_to_block_angle)>30:
             if a.robot_to_block_angle>0:
                 do_action('left')
             elif a.robot_to_block_angle<0:
